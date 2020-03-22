@@ -15,6 +15,18 @@
 
         <div class="container">
             <h3>Welcome To Socket World</h3>
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-header">
+                    Featured
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+            </div>
+
         </div>
 
     </div>
@@ -26,7 +38,11 @@
         let app = new Vue({
             el: '#app',
             created() {
-                console.log('Component Created !..');
+                socket.emit('Created', 'Client-To-Server');
+                socket.on('Created', (data) => {
+                    console.log(data, 'client');
+                })
+
             }
         })
     </script>

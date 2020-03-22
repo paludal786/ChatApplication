@@ -16,4 +16,9 @@ io.on('connection', (socket) => {
         console.log('Socket Disconnected !...');
     })
 
+    socket.on('Created', (data) => {
+        console.log('server data', data);
+        socket.broadcast.emit('Created', (data)) // to broadcast other's user data
+    })
+
 });
