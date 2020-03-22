@@ -17,14 +17,19 @@ io.on('connection', (socket) => {
     })
 
     socket.on('Created', (data) => {
-        console.log('server data', data);
         socket.broadcast.emit('Created', (data)) // to broadcast other's user data
     })
 
     socket.on('chat-message', (data) => {
-        console.log(data);
-
         socket.broadcast.emit('chat-message', (data))
+    })
+
+    socket.on('typing', (data) => {
+        socket.broadcast.emit('typing', (data))
+    })
+
+    socket.on('stopTyping', (data) => {
+        socket.broadcast.emit('stopTyping', (data))
     })
 
 });
