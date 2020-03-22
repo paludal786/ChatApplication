@@ -30,21 +30,40 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 const app = new Vue({
     el: '#app',
     data: {
-        msg: '',
+        message: '',
         chat: {
-            oldMsg: []
+            oldMessage: []
         }
     },
     methods: {
         send() {
 
-            if (this.msg.length != 0) {
-                console.log(this.msg);
-                this.chat.oldMsg.push(this.msg);
-                this.msg = '';
+            if (this.message.length != 0) {
+                console.log(this.message);
+                this.chat.oldMessage.push(this.message);
+
+                axios.post('/send', {
+                    message: this.message
+                }).then(res => {
+                    console.log(res);
+                    this.message = '';
+                }).catch(error => {
+                    console.log(error);
+                });
             }
 
 
         }
+    },
+    created() {
+        // Echo.private('chat')
+        //     .listen('ChatEvent', (e) => {
+        //         // console.log(e.order.name);
+        //         this.chat.oldMessage.push(e.message);
+        //     });
+        var channel = Echo.channel('chat');
+        channel.listen('ChatEvent', function(data) {
+            alert(JSON.stringify(data));
+        });
     }
 });

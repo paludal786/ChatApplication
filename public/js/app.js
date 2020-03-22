@@ -1914,6 +1914,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Component mounted.');
@@ -47199,7 +47200,9 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("li", { staticClass: "list-group-item" }, [_vm._t("default")], 2)
+    _c("li", { staticClass: "list-group-item" }, [_vm._t("default")], 2),
+    _vm._v(" "),
+    _c("small", { staticClass: "badge float-right" }, [_vm._v("name")])
   ])
 }
 var staticRenderFns = []
@@ -59401,19 +59404,39 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
 var app = new Vue({
   el: '#app',
   data: {
-    msg: '',
+    message: '',
     chat: {
-      oldMsg: []
+      oldMessage: []
     }
   },
   methods: {
     send: function send() {
-      if (this.msg.length != 0) {
-        console.log(this.msg);
-        this.chat.oldMsg.push(this.msg);
-        this.msg = '';
+      var _this = this;
+
+      if (this.message.length != 0) {
+        console.log(this.message);
+        this.chat.oldMessage.push(this.message);
+        axios.post('/send', {
+          message: this.message
+        }).then(function (res) {
+          console.log(res);
+          _this.message = '';
+        })["catch"](function (error) {
+          console.log(error);
+        });
       }
     }
+  },
+  created: function created() {
+    // Echo.private('chat')
+    //     .listen('ChatEvent', (e) => {
+    //         // console.log(e.order.name);
+    //         this.chat.oldMessage.push(e.message);
+    //     });
+    var channel = Echo.channel('chat');
+    channel.listen('ChatEvent', function (data) {
+      alert(JSON.stringify(data));
+    });
   }
 });
 
@@ -59463,7 +59486,7 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
   key: "ebc4cdbcdcb891908949",
   cluster: "ap2",
-  encrypted: true
+  forceTLS: true
 });
 
 /***/ }),

@@ -13,7 +13,7 @@
                     </div>
                     <ul class="list-group list-group-flush">
                     <example-component v-for="item in chat.oldMsg" :key="item.index"> @{{ item }}</example-component>
-                      <li class="list-group-item"><input type="text" class="form-control" placeholder="type your msg" v-model="msg" @keyup.enter="send"></li>
+                      <li class="list-group-item"><input type="text" class="form-control" placeholder="type your msg" v-model="message" @keyup.enter="send"></li>
                     </ul>
                   </div>
             </div>
