@@ -16,17 +16,38 @@
 
         <div class="container">
             <div class="col-md-6 offset-md-3">
+
+                <div v-if="ready">
+                    <p v-for="item in info">
+                        {{ item.name }} {{ item.type }}
+                    </p>
+                </div>
+
                 <h3>Welcome To Socket World</h3>
-                <div class="card bg-primary">
+
+                <div v-if="!ready">
+                    <form @submit.prevent="AddUser">
+                        <div class="form-group row">
+                            <input type="text" class="form-control col-9" v-model="name" placeholder="Enter Your Name">
+                            <input type="submit" value="Add" class="btn btn-sm btn-primary ml-1">
+                        </div>
+                    </form>
+                </div>
+
+                <h1 v-else>{{name}}</h1>
+
+                <div class="card bg-primary" v-if="ready">
                     <div class="card-header">
                         <b>Chat App</b>
+                        <span class="float-right">{{ connections }} connected</span>
                     </div>
                     <ul class="list-group list-group-flush text-right">
-                        <small v-if="typing" class="text-white">User is typing</small>
+                        <small v-if="typing" class="text-white">{{typing}} is typing</small>
                         <li class="list-group-item" v-for="message in messages">
-
-                            <span :class="{'float-left':message.type === 0}"> {{message.message}}</span>
-
+                            <span :class="{'float-left':message.type === 0}"> 
+                                {{message.message}}
+                                <small>:{{ message.by }}</small>
+                            </span>
                         </li>
                     </ul>
                     <div class="card-body">
@@ -52,46 +73,90 @@
             data: {
                 newmessage: null,
                 messages: [],
-                typing: false
+                typing: false,
+                name: null,
+                ready: false,
+                info: [],
+                connections: 0
             },
             created() {
+                //event 
+                window.onbeforeunload = () => {
+                    socket.emit('leaved', this.name)
+                }
+
+                socket.on('connections', (data) => {
+                    this.connections = data;
+                })
+
+                //listener
                 socket.emit('Created', 'Client-To-Server');
                 socket.on('Created', (data) => {
                     console.log(data, 'client');
                 })
                 socket.on('chat-message', (data) => {
                     this.messages.push({
-                        message: data,
-                        type: 1
+                        message: data.message,
+                        type: 1,
+                        by: data.user
                     });
                 })
 
-                socket.on('typing', () => {
-                    this.typing = true
+                socket.on('typing', (name) => {
+                    this.typing = name
                 })
 
                 socket.on('stopTyping', () => {
                     this.typing = false
                 })
 
+                socket.on('joined', (data) => {
+                    this.info.push({
+                        name: data,
+                        type: 'Joined'
+                    });
+
+                    setTimeout(() => {
+                        this.info = []
+                    }, 5000);
+
+                })
+
+                socket.on('leaved', (data) => {
+                    this.info.push({
+                        name: data,
+                        type: 'Leaved'
+                    });
+
+                    setTimeout(() => {
+                        this.info = []
+                    }, 5000);
+                })
+
             },
             watch: {
                 newmessage(value) {
-                    value ? socket.emit('typing') : socket.emit('stopTyping')
+                    value ? socket.emit('typing', this.name) : socket.emit('stopTyping')
                 }
             },
             methods: {
                 send() {
-                    //type 0 : send
+
                     this.messages.push({
                         message: this.newmessage,
-                        type: 0
+                        type: 0,
+                        by: 'Me'
                     });
-                    console.log(this.messages, this.newmessage);
-
-                    socket.emit('chat-message', this.newmessage)
+                    socket.emit('chat-message', {
+                        message: this.newmessage,
+                        user: this.name
+                    })
                     this.newmessage = null;
                 },
+                AddUser() {
+                    this.ready = true;
+                    socket.emit('joined', this.name)
+                }
             }
         })
     </script>

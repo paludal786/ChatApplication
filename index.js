@@ -10,6 +10,13 @@ http.listen(3000, function() {
 });
 
 io.on('connection', (socket) => {
+
+    console.log(Object.keys(io.sockets.connected).length);
+
+    io.emit('connections', Object.keys(io.sockets.connected).length)
+
+
+    // emit events
     console.log('Socket Connected !.....');
 
     socket.on('disconnect', () => {
@@ -30,6 +37,15 @@ io.on('connection', (socket) => {
 
     socket.on('stopTyping', (data) => {
         socket.broadcast.emit('stopTyping', (data))
+    })
+
+    socket.on('joined', (data) => {
+        socket.broadcast.emit('joined', (data))
+    })
+
+    // listener
+    socket.on('leaved', (data) => {
+        socket.broadcast.emit('leaved', (data))
     })
 
 });
