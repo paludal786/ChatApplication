@@ -21,4 +21,10 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('Created', (data)) // to broadcast other's user data
     })
 
+    socket.on('chat-message', (data) => {
+        console.log(data);
+
+        socket.broadcast.emit('chat-message', (data))
+    })
+
 });
