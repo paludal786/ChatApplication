@@ -93,8 +93,8 @@
                 ready: false,
                 info: [],
                 connections: 0,
-                count: 0,
-                trial: true
+                trial: true,
+                count: 5
             },
             created() {
                 //event 
@@ -159,18 +159,14 @@
             },
             methods: {
                 send() {
-                    //type 0 : send
-                    //type 1 : recieved
                     this.messages.push({
                         message: this.newmessage,
                         type: 0,
                         by: 'Me',
-                        countMsg: this.count + 1
                     });
                     socket.emit('chat-message', {
                         message: this.newmessage,
                         user: this.name,
-                        countMsg: this.count + 1
                     })
                     console.log(this.messages);
 
@@ -180,7 +176,7 @@
 
                     console.log(a);
 
-                    if (a.length > 3) {
+                    if (a.length > this.count) {
                         this.trial = false;
                     }
 

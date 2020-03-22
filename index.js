@@ -6,15 +6,12 @@ app.get('/', (req, res) => {
 });
 
 http.listen(3000, function() {
-    console.log('Connection Done On 3000 Port !.....');
+    console.log('Connection Established On 3000 Port !.....');
 });
 
 io.on('connection', (socket) => {
 
-    console.log(Object.keys(io.sockets.connected).length);
-
     io.emit('connections', Object.keys(io.sockets.connected).length)
-
 
     // emit events
     console.log('Socket Connected !.....');
