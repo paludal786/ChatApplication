@@ -137,8 +137,13 @@
                     setTimeout(() => {
                         this.info = []
                     }, 5000);
-
+                    console.log(data, this.info);
                 })
+
+                // socket.on('joined', (username) => {
+                //     console.log(username);
+
+                // })
 
                 socket.on('leaved', (data) => {
                     this.info.push({

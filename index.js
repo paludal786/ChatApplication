@@ -1,9 +1,11 @@
 let app = require('express')();
 let http = require('http').createServer(app);
-let io = require('socket.io')(http);
+var io = require('socket.io')(http);
 let port = process.env.PORT || 3000;
+
+let users = [];
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/index1.html');
 });
 
 http.listen(port, function() {
@@ -11,6 +13,9 @@ http.listen(port, function() {
 });
 
 io.on('connection', (socket) => {
+
+    console.log("SocketId :-", socket.id);
+
 
     io.emit('connections', Object.keys(io.sockets.connected).length)
 
@@ -38,6 +43,10 @@ io.on('connection', (socket) => {
     })
 
     socket.on('joined', (data) => {
+        data['username'] = socket.id;
+        // io.emit('joined', users);
+        console.log(data);
+
         socket.broadcast.emit('joined', (data))
     })
 
